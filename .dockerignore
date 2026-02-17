@@ -1,0 +1,13 @@
+__pycache__
+*.pyc
+.pytest_cache
+*.pdf
+*.xlsx
+*.json
+!requirements.txt
+!railway.toml
+frontend/
+.claude/
+.git/
+Invoice_Report.xlsx
+Audit.json
