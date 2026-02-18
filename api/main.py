@@ -16,11 +16,19 @@ app = FastAPI(
 )
 
 # CORS — allow frontend origins
+# Set ALLOWED_ORIGINS="*" to allow any origin (for standalone HTML usage)
 _origins_env = os.environ.get("ALLOWED_ORIGINS", "")
-ALLOWED_ORIGINS = [o.strip() for o in _origins_env.split(",") if o.strip()]
+_origins_list = [o.strip() for o in _origins_env.split(",") if o.strip()]
 
-if not ALLOWED_ORIGINS:
+_allow_all = "*" in _origins_list
+
+if _allow_all:
+    ALLOWED_ORIGINS: list[str] = ["*"]
+elif _origins_list:
+    ALLOWED_ORIGINS = _origins_list
+else:
     ALLOWED_ORIGINS = [
+        "https://ameerahalameer.github.io",
         "https://invoice-tool.pages.dev",
         "http://localhost:8080",
         "http://localhost:3000",
@@ -30,7 +38,7 @@ if not ALLOWED_ORIGINS:
 app.add_middleware(
     CORSMiddleware,
     allow_origins=ALLOWED_ORIGINS,
-    allow_credentials=True,
+    allow_credentials=not _allow_all,  # credentials not allowed with wildcard
     allow_methods=["GET", "POST", "OPTIONS"],
     allow_headers=["*"],
     max_age=3600,
